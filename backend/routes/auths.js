@@ -11,6 +11,7 @@ router.post("/signup", async(req, res) => {
     try {
         const { error } = signUpBodyValidation(req.body);
         if (error) {
+            console.log(error.details[0].message)
             return res.status(400).send({ error: true, message: error.details[0].message })
         }
         const user = await User.findOne({ email: req.body.email });
@@ -19,8 +20,10 @@ router.post("/signup", async(req, res) => {
         }
         const salt = await bcrypt.genSalt(Number(process.env.SALT));
         const hashPassword = await bcrypt.hash(req.body.password, salt);
-        await new User({...req.body, password: hashPassword }).save();
-        res.status(200).send({ error: false, message: "User Account created successfully" })
+        const newUser = await new User({...req.body, password: hashPassword })
+        newUser.save();
+        console.log("new user = ", newUser)
+        res.status(200).send({ error: false, new_user: newUser, message: "User Account created successfully" })
     } catch (error) {
         console.log(error);
         res.status(500).send({ error: true, message: "There is internal server error" })

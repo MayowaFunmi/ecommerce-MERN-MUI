@@ -17,6 +17,8 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useState } from 'react';
 import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux';
+import { registerUser } from '../features/authSlice';
 
 const theme = createTheme();
 const IconTextField = ({ iconStart, iconEnd, InputProps, ...props }) => {
@@ -41,6 +43,9 @@ const SpanStyled = styled.span`
   color: red;
 `;
 const SignUp = () => {
+  const dispatch = useDispatch(); // send user data from form to backend
+  const auth = useSelector((state) => state.auth);
+
   const [values, setValues] = useState({
     username: '',
     firstName: '',
@@ -68,6 +73,20 @@ const SignUp = () => {
     password: '',
     confirmPassword: '',
   });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    dispatch(registerUser(values));
+    setValues({
+      username: '',
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+    });
+  };
+
   const handleClickShowPassword = () => {
     setValues({ ...values, showPassword: !values.showPassword });
   };
@@ -125,7 +144,6 @@ const SignUp = () => {
       setError({ ...error, confirmPassword: 'Passwords do not match!!' });
     }
   };
-  console.log(error);
   const inputValidation = (e) => {
     let { name, value } = e.target;
     checkBlur(name, value);
@@ -137,6 +155,7 @@ const SignUp = () => {
         <CssBaseline />
         <Box
           component="form"
+          onSubmit={handleSubmit}
           sx={{
             '& .MuiTextField-root': { m: 1, width: '50ch' },
             marginTop: 8,
@@ -239,6 +258,17 @@ const SignUp = () => {
             {error.confirmPassword && (
               <SpanStyled>{error.confirmPassword}</SpanStyled>
             )}
+            <button>
+              {auth.registerStatus === 'pending'
+                ? 'Registering Your Data ... Please wait!'
+                : 'Register'}
+            </button>
+            {auth.registerStatus === 'rejected' ? (
+              <p>{auth.registerError}</p>
+            ) : null}
+            {auth.registerStatus === 'success' ? (
+              <p>You have successfully registered</p>
+            ) : null}
           </Container>
         </Box>
       </Container>
