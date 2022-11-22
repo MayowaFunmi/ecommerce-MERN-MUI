@@ -1,7 +1,8 @@
 const Joi = require("joi");
 const passwordComplexity = require("joi-password-complexity");
+const Role = require("../models/Roles")
 
-// signup va;idation
+// signup validation
 const signUpBodyValidation = (body) => {
     const schema = Joi.object({
         username: Joi.string().required().label("UserName"),
@@ -9,6 +10,8 @@ const signUpBodyValidation = (body) => {
         lastName: Joi.string().required().label("Last Name"),
         email: Joi.string().email().required().label("E-mail"),
         password: passwordComplexity().required().label("Password"),
+        roles: Joi.array().items(Joi.string())
+            //roles: Joi.string()
     });
     return schema.validate(body);
 }

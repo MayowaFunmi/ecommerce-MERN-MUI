@@ -50,10 +50,11 @@ const authSlice = createSlice({
     });
     builder.addCase(registerUser.fulfilled, (state, action) => {
       if (action.payload) {
-        const new_user = action.payload;
+        const new_user = action.payload; // regData.data
+        const newUserDetail = new_user.newUser
         return {
           ...state,
-          newUser: new_user,
+          newUser: new_user.newUser,
           username: new_user.username,
           registerStatus: 'success',
         };

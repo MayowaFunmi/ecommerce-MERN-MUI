@@ -3,27 +3,35 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const { signUpBodyValidation, loginBodyValidation } = require("../utils/validationSchema");
 const User = require("../models/Users");
-
+const Role = require("../models/Roles");
+const { request } = require('express');
 const router = express.Router();
 
 // signup route
 router.post("/signup", async(req, res) => {
     try {
-        const { error } = signUpBodyValidation(req.body);
+        const { error, value } = signUpBodyValidation(req.body);
         if (error) {
             console.log(error.details[0].message)
             return res.status(400).send({ error: true, message: error.details[0].message })
+        } else {
+            console.log('value = ', value)
         }
         const user = await User.findOne({ email: req.body.email });
         if (user) {
             return res.status(400).send({ error: true, message: "User with email already exists" })
         }
+        // add roles
+        const roles = req.body.roles.map(async(roleName) => {
+            const newRole = new Role({ name: roleName })
+            return
+        })
         const salt = await bcrypt.genSalt(Number(process.env.SALT));
         const hashPassword = await bcrypt.hash(req.body.password, salt);
         const newUser = await new User({...req.body, password: hashPassword })
-        newUser.save();
-        console.log("new user = ", newUser)
+        newUser.save()
         res.status(200).send({ error: false, new_user: newUser, message: "User Account created successfully" })
+        console.log("new user = ", newUser)
     } catch (error) {
         console.log(error);
         res.status(500).send({ error: true, message: "There is internal server error" })

@@ -4,6 +4,7 @@ const cors = require('cors');
 require('dotenv').config();
 const bodyParser = require('body-parser');
 const authRoutes = require('./routes/auths');
+const roleRoutes = require('./routes/roles');
 
 const app = express();
 
@@ -12,6 +13,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 app.use("/api", authRoutes);
+app.use("/api/roles", roleRoutes);
 
 app.get("/", (req, res) => {
     try {

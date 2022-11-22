@@ -127,15 +127,11 @@ const SignUp = () => {
       setError({ ...error, lastName: 'Please enter your Last Name' });
     } else if (name === 'email' && value === '') {
       setError({ ...error, email: 'Please enter your E-mail Address' });
-    }
-    if (name === 'password' && value === '') {
+    } else if (name === 'password' && value === '') {
       setError({ ...error, password: 'Please enter your Password' });
     } else if (values.confirmPassword && value !== values.confirmPassword) {
       setError({ ...error, confirmPassword: 'Passwords do not match!!' });
-    } else {
-      setError({ ...error, confirmPassword: 'error.confirmPassword' });
-    }
-    if (name === 'confirmPassword' && value === '') {
+    } else if (name === 'confirmPassword' && value === '') {
       setError({
         ...error,
         confirmPassword: 'Please enter your Password Again',
