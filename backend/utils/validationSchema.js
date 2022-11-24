@@ -10,8 +10,8 @@ const signUpBodyValidation = (body) => {
         lastName: Joi.string().required().label("Last Name"),
         email: Joi.string().email().required().label("E-mail"),
         password: passwordComplexity().required().label("Password"),
-        roles: Joi.array().items(Joi.string())
-            //roles: Joi.string()
+        //roles: Joi.array().items(Joi.string())
+        roles: Joi.string()
     });
     return schema.validate(body);
 }

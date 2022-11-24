@@ -14,21 +14,19 @@ router.post("/signup", async(req, res) => {
         if (error) {
             console.log(error.details[0].message)
             return res.status(400).send({ error: true, message: error.details[0].message })
-        } else {
-            console.log('value = ', value)
         }
+        // get role
+        const userRole = await Role.find({ name: req.body.roles })
+        const getRoleId = userRole.map((role) => role._id)
+            // console.log("role id = ", getRoleId)
         const user = await User.findOne({ email: req.body.email });
         if (user) {
             return res.status(400).send({ error: true, message: "User with email already exists" })
         }
-        // add roles
-        const roles = req.body.roles.map(async(roleName) => {
-            const newRole = new Role({ name: roleName })
-            return
-        })
+
         const salt = await bcrypt.genSalt(Number(process.env.SALT));
         const hashPassword = await bcrypt.hash(req.body.password, salt);
-        const newUser = await new User({...req.body, password: hashPassword })
+        const newUser = await new User({...req.body, password: hashPassword, roles: getRoleId })
         newUser.save()
         res.status(200).send({ error: false, new_user: newUser, message: "User Account created successfully" })
         console.log("new user = ", newUser)

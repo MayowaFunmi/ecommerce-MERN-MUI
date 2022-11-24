@@ -5,6 +5,7 @@ require('dotenv').config();
 const bodyParser = require('body-parser');
 const authRoutes = require('./routes/auths');
 const roleRoutes = require('./routes/roles');
+const Role = require('./models/Roles');
 
 const app = express();
 
@@ -23,7 +24,16 @@ app.get("/", (req, res) => {
         res.status(404).send(error.message)
     }
 })
+app.get("/roles", async(req, res) => {
+    try {
+        const allRoles = await Role.find({ name: 'admin' })
+        res.send({ error: false, id: allRoles.map((role) => role._id) })
+    } catch (error) {
+        console.log("error = ", error.message)
+        res.status(404).send(error.message)
+    }
 
+})
 const uri = process.env.DB_URI;
 const port = process.env.PORT || 8000;
 app.listen(port, () => {
