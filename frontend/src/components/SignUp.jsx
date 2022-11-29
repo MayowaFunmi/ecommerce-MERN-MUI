@@ -5,10 +5,12 @@ import {
   CssBaseline,
   IconButton,
   InputAdornment,
+  MenuItem,
   TextField,
   ThemeProvider,
 } from '@mui/material';
-import React from 'react';
+import React, { useEffect } from 'react';
+import axios from 'axios';
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 import PersonIcon from '@mui/icons-material/Person';
 import Person2Icon from '@mui/icons-material/Person2';
@@ -45,7 +47,7 @@ const SpanStyled = styled.span`
 const SignUp = () => {
   const dispatch = useDispatch(); // send user data from form to backend
   const auth = useSelector((state) => state.auth);
-
+  const [data, setData] = useState([]);
   const [values, setValues] = useState({
     username: '',
     firstName: '',
@@ -54,6 +56,8 @@ const SignUp = () => {
     password: '',
     confirmPassword: '',
     showPassword: false,
+    roles: '',
+    passwordError: false,
   });
   const [values2, setValues2] = useState({
     username: '',
@@ -73,6 +77,19 @@ const SignUp = () => {
     password: '',
     confirmPassword: '',
   });
+
+  useEffect(() => {
+    axios
+      .get('http://localhost:8000/roles')
+      .then((res) => {
+        setData(res.data.all_roles);
+        //console.log('res = ', res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+  //console.log(values);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -210,6 +227,28 @@ const SignUp = () => {
               />
             </div>
             {error.email && <SpanStyled>{error.email}</SpanStyled>}
+
+            <div>
+              <IconTextField
+                select
+                name="roles"
+                value={values.roles}
+                label="Select Role"
+                iconStart={<Person2Icon />}
+                onChange={handleChange}
+                onBlur={inputValidation}
+                required
+              >
+                {data.map((role, index) => {
+                  return (
+                    <MenuItem key={role._id} value={role._id}>
+                      {role.name}
+                    </MenuItem>
+                  );
+                })}
+              </IconTextField>
+            </div>
+
             <div>
               <IconTextField
                 name="password"
@@ -254,6 +293,7 @@ const SignUp = () => {
             {error.confirmPassword && (
               <SpanStyled>{error.confirmPassword}</SpanStyled>
             )}
+
             <button>
               {auth.registerStatus === 'pending'
                 ? 'Registering Your Data ... Please wait!'

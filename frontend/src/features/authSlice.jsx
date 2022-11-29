@@ -30,6 +30,7 @@ export const registerUser = createAsyncThunk(
         lastName: user.lastName,
         email: user.email,
         password: user.password,
+        roles: user.roles,
       });
       console.log('regData  data = ', regData.data);
       return regData.data;
@@ -51,7 +52,7 @@ const authSlice = createSlice({
     builder.addCase(registerUser.fulfilled, (state, action) => {
       if (action.payload) {
         const new_user = action.payload; // regData.data
-        const newUserDetail = new_user.newUser
+        const newUserDetail = new_user.newUser;
         return {
           ...state,
           newUser: new_user.newUser,

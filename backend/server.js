@@ -26,12 +26,17 @@ app.get("/", (req, res) => {
 })
 app.get("/roles", async(req, res) => {
     try {
-        const allRoles = await Role.find({ name: 'admin' })
-        res.send({ error: false, id: allRoles.map((role) => role._id) })
+        const allRoles = await Role.find()
+            //res.send({ error: false, all_roles: allRoles.map((role) => role._id) })
+        res.send({ error: false, all_roles: allRoles })
     } catch (error) {
         console.log("error = ", error.message)
         res.status(404).send(error.message)
     }
+
+})
+
+app.delete("/delete_user", async(req, res) => {
 
 })
 const uri = process.env.DB_URI;
